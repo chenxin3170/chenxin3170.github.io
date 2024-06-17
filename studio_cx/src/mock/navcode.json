@@ -1,0 +1,61 @@
+[
+    {
+        "id": 1,
+        "title": "ImgUrl",
+        "icon": "",
+        "desc": "免费图床",
+        "url": "https://www.imgurl.org/vip/manage/upload"
+    },
+    {
+        "id": 2,
+        "title": "小红书去水印",
+        "icon": "",
+        "desc": "小红书去水印图片视频下载",
+        "url": "https://www.xhs-download.online/"
+    },
+    {
+        "id": 3,
+        "title": "element-plus",
+        "icon": "",
+        "desc": "基于 Vue 3，面向设计师和开发者的组件库",
+        "url": "https://element-plus.org/zh-CN"
+    }
+    ,
+    {
+        "id": 4,
+        "title": "琅琅配音",
+        "icon": "",
+        "desc": "琅琅配音是一款免费的文本转语音工具",
+        "url": "https://www.lang123.top/"
+    }
+    ,
+    {
+        "id": 5,
+        "title": "新片场",
+        "icon": "",
+        "desc": "视频素材下载",
+        "url": "https://stock.xinpianchang.com/"
+    }
+    ,
+    {
+        "id": 6,
+        "title": "publicapis",
+        "icon": "",
+        "desc": "api服务",
+        "url": "https://publicapis.io/"
+    } ,
+    {
+        "id": 7,
+        "title": "媒小三",
+        "icon": "",
+        "desc": "新媒体工具网，实用的短视频文案提取网，提供各种实用的文案提取工具，如：短视频文案提取，短视频文案下载_，语音转换文字等功能，一键快捷音频视频文案提取",
+        "url": "https://www.meixiaosan.com/shortvideotext.html"
+    } ,
+    {
+        "id": 8,
+        "title": "歌曲宝",
+        "icon": "",
+        "desc": "音乐下载",
+        "url": "https://www.gequbao.com/"
+    }
+]
