@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>文章格式化</title>
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  .container {
+    display: flex;
+    height: 100%;
+  }
+  #left, #right {
+    width: 50%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #left textarea {
+    width: 100%;
+    height: 80%;
+    resize: none;
+  }
+  #output {
+    white-space: pre-wrap; /* 保持换行 */
+    word-break: break-all; /* 避免长单词破坏布局 */
+    height: 80%;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  .controls {
+    margin-top: 10px;
+  }
+  .copy-button {
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="left">
+    <h2>输入文章 (Markdown)</h2>
+    <textarea id="input" placeholder="在这里输入您的文章..."></textarea>
+    <div class="controls">
+      <label for="lineHeight">行间距 (em): </label>
+      <input type="number" id="lineHeight" value="1.2" step="0.1" min="0.5" max="3">
+      <button onclick="applyLineHeight()">应用行间距</button>
+    </div>
+  </div>
+  <div id="right">
+    <h2>预览</h2>
+    <div id="output"></div>
+    <div class="copy-button">
+      <button onclick="copyText()">复制</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  function formatText() {
+    const input = document.getElementById('input').value;
+    const output = document.getElementById('output');
+
+    // 在每个标点符号后插入<br>标签
+    let formattedText = input.replace(/([。！？，])/g, '$1<br><br>');
+
+    // 使用marked.js将Markdown文本转换为HTML
+    const formattedHtml = marked.parse(formattedText);
+
+    // 设置输出内容
+    output.innerHTML = formattedHtml;
+
+    // 更新行间距
+    applyLineHeight();
+
+    // 缓存输入和预览内容
+    localStorage.setItem('input', input);
+    localStorage.setItem('output', formattedHtml);
+  }
+
+  function applyLineHeight() {
+    const lineHeight = document.getElementById('lineHeight').value;
+    const output = document.getElementById('output');
+    output.style.lineHeight = lineHeight + 'em';
+  }
+
+  function copyText() {
+    const output = document.getElementById('output');
+    const tempTextArea = document.createElement('textarea');
+    tempTextArea.value = output.innerText; // 使用innerText以获取纯文本内容
+    document.body.appendChild(tempTextArea);
+    tempTextArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempTextArea);
+    alert('已复制到剪贴板！');
+  }
+
+  // 监听输入框变化，实时更新预览
+  document.getElementById('input').addEventListener('input', formatText);
+  document.getElementById('lineHeight').addEventListener('input', applyLineHeight);
+
+  // 初始化时加载缓存的内容
+  window.onload = function() {
+    const cachedInput = localStorage.getItem('input');
+    const cachedOutput = localStorage.getItem('output');
+
+    if (cachedInput) {
+      document.getElementById('input').value = cachedInput;
+    }
+
+    if (cachedOutput) {
+      document.getElementById('output').innerHTML = cachedOutput;
+    }
+
+    // 初始应用行间距
+    applyLineHeight();
+  };
+</script>
+
+</body>
+</html>
