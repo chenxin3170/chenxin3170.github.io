@@ -2,10 +2,14 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>文章格式化</title>
+<!-- 引入Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  body, html {
-    height: 100%;
+  body {
+    height: 100vh;
     margin: 0;
     font-family: Arial, sans-serif;
   }
@@ -20,47 +24,127 @@
   }
   #left textarea {
     width: 100%;
-    height: 80%;
+    height: 75%;
     resize: none;
   }
   #output {
     white-space: pre-wrap; /* 保持换行 */
     word-break: break-all; /* 避免长单词破坏布局 */
-    height: 80%;
+    height: 75%;
     overflow-y: auto;
     border: 1px solid #ccc;
     padding: 10px;
   }
-  .controls {
-    margin-top: 10px;
+  .navbar {
+    background-color: #f8f9fa;
+  }
+  .navbar-nav .nav-item .nav-link {
+    cursor: pointer;
+  }
+  .editor-buttons {
+    margin-bottom: 10px;
+  }
+  .line-height-slider {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    z-index: 1000;
+  }
+  .line-height-slider label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .line-height-slider input {
+    width: 100%;
   }
   .copy-button {
-    margin-top: 10px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
   }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <div id="left">
-    <h2>输入文章 (Markdown)</h2>
-    <textarea id="input" placeholder="在这里输入您的文章..."></textarea>
-    <div class="controls">
-      <label for="lineHeight">行间距 (em): </label>
-      <input type="number" id="lineHeight" value="1.2" step="0.1" min="0.5" max="3">
-      <button onclick="applyLineHeight()">应用行间距</button>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 navbar">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">Markdown编辑器</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" onclick="applyBold()">加粗</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="applyItalic()">斜体</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="applyUnderline()">下划线</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="modal" data-target="#colorModal">字体颜色</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="toggleLineHeightSlider()">行间距</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
     </div>
   </div>
-  <div id="right">
-    <h2>预览</h2>
-    <div id="output"></div>
-    <div class="copy-button">
-      <button onclick="copyText()">复制</button>
+  <div class="row">
+    <div id="left" class="col-6">
+      <h2 class="mb-3">输入文章 (Markdown)</h2>
+      <textarea id="input" placeholder="在这里输入您的文章..." class="form-control"></textarea>
+    </div>
+    <div id="right" class="col-6">
+      <h2 class="mb-3 d-flex justify-content-between align-items-center">
+        预览
+        <button class="btn btn-success copy-button" onclick="copyText()">复制</button>
+      </h2>
+      <div id="output" class="border p-3"></div>
     </div>
   </div>
 </div>
 
+<!-- 行间距滑块 -->
+<div class="line-height-slider" id="lineHeightSlider">
+  <label for="lineHeight">行间距 (em): </label>
+  <input type="range" id="lineHeight" min="0.5" max="3" step="0.1" value="1.2" oninput="applyLineHeight()">
+</div>
+
+<!-- 字体颜色选择模态框 -->
+<div class="modal fade" id="colorModal" tabindex="-1" role="dialog" aria-labelledby="colorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="colorModalLabel">选择字体颜色</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="color" id="colorPicker" class="form-control">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" onclick="applyColor()">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 引入Bootstrap JS 和 Popper.js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-s1swLUYcLBqAXHj7nWZcBD03oDfaVT4TaOQEaQGnSa65SsyckDHTlfGcB8+LOLkz" crossorigin="anonymous"></script>
 <script>
   function formatText() {
     const input = document.getElementById('input').value;
@@ -97,12 +181,54 @@
     tempTextArea.select();
     document.execCommand('copy');
     document.body.removeChild(tempTextArea);
-    alert('已复制到剪贴板！');
+    showToast('已复制到剪贴板！');
+  }
+
+  function applyBold() {
+    wrapSelection("**", "**");
+  }
+
+  function applyItalic() {
+    wrapSelection("_", "_");
+  }
+
+  function applyUnderline() {
+    wrapSelection("<u>", "</u>");
+  }
+
+  function applyColor() {
+    const color = document.getElementById('colorPicker').value;
+    wrapSelection(`<span style="color: ${color};">`, "</span>");
+    $('#colorModal').modal('hide');
+  }
+
+  function wrapSelection(startTag, endTag) {
+    const textarea = document.getElementById('input');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    const replacement = startTag + selectedText + endTag;
+    textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+    textarea.setSelectionRange(start + startTag.length, start + startTag.length + selectedText.length);
+    formatText();
+  }
+
+  function showToast(message) {
+    const toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">');
+    const header = $('<div class="toast-header">');
+    const body = $('<div class="toast-body">');
+    header.append('<strong class="mr-auto">提示</strong>');
+    header.append('<small>刚刚</small>');
+    header.append('<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"><span aria-hidden="true">&times;</span></button>');
+    body.text(message);
+    toast.append(header);
+    toast.append(body);
+    $('body').append(toast);
+    toast.toast('show');
   }
 
   // 监听输入框变化，实时更新预览
   document.getElementById('input').addEventListener('input', formatText);
-  document.getElementById('lineHeight').addEventListener('input', applyLineHeight);
 
   // 初始化时加载缓存的内容
   window.onload = function() {
@@ -120,6 +246,28 @@
     // 初始应用行间距
     applyLineHeight();
   };
+
+  // 行间距滑块显示和隐藏
+  function toggleLineHeightSlider() {
+    const slider = document.getElementById('lineHeightSlider');
+    slider.style.display = slider.style.display === 'block' ? 'none' : 'block';
+  }
+
+  // 点击空白区域隐藏滑块
+  document.addEventListener('click', function(event) {
+    const slider = document.getElementById('lineHeightSlider');
+    if (!slider.contains(event.target) && event.target.id !== 'lineHeight') {
+      slider.style.display = 'none';
+    }
+  });
+
+  // 确保滑块内部点击不会触发隐藏
+  document.getElementById('lineHeightSlider').addEventListener('click', function(event) {
+    event.stopPropagation();
+  });
+
+  // 确保滑块的值变化时更新行间距
+  document.getElementById('lineHeight').addEventListener('input', applyLineHeight);
 </script>
 
 </body>
